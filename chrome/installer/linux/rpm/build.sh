@@ -251,6 +251,11 @@ export USR_BIN_SYMLINK_NAME="${PACKAGE}-${CHANNEL}"
 cd "${OUTPUTDIR}"
 
 case "$TARGETARCH" in
+
+  arm64 )
+    export ARCHITECTURE="arm64"
+    stage_install_rpm
+    ;;
   arm )
     export ARCHITECTURE="armhf"
     stage_install_rpm
