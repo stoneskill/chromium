@@ -1,0 +1,10 @@
+# Build arguments go here.
+# See "gn args <out_dir> --list" for available build arguments.
+#enable_nacl=false
+is_debug=false
+symbol_level=0
+target_cpu="mips64el"
+remove_webcore_debug_symbols=true
+enable_linux_installer=true
+use_allocator="none"
+use_gold=true
