@@ -276,11 +276,17 @@ case "$TARGETARCH" in
   arm )
     export ARCHITECTURE="armhf"
     ;;
+  arm64 )
+    export ARCHITECTURE="arm64"
+    ;;
   ia32 )
     export ARCHITECTURE="i386"
     ;;
   x64 )
     export ARCHITECTURE="amd64"
+    ;;
+  mips64el )
+    export ARCHITECTURE="mips64el"
     ;;
   mipsel )
     export ARCHITECTURE="mipsel"
