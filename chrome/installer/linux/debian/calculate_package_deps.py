@@ -55,6 +55,45 @@ else:
   sys.exit(1)
 cmd.extend(['-l%s/usr/lib' % sysroot, '-O', '-e', binary])
 
+if arch == 'mips64el':
+    deps_str = ''
+    deps = deps_str.split(', ')
+    interval_sets = []
+    if deps_str != '':
+      for dep in deps:
+        interval_sets.append(package_version_interval.parse_interval_set(dep))
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    deps_file = os.path.join(script_dir, 'dist_package_versions.json')
+    distro_package_versions = json.load(open(deps_file))
+
+    ret_code = 0
+    if distro_check:
+      for distro in distro_package_versions:
+        for interval_set in interval_sets:
+          dep_satisfiable = False
+          for interval in interval_set.intervals:
+            package = interval.package
+            if package not in distro_package_versions[distro]:
+              continue
+            distro_version = deb_version.DebVersion(
+                distro_package_versions[distro][package])
+            if interval.contains(distro_version):
+              dep_satisfiable = True
+              break
+          if not dep_satisfiable:
+            print >> sys.stderr, (
+                'Dependency %s not satisfiable on distro %s caused by binary %s' % (
+                    interval_set.formatted(), distro, os.path.basename(binary)))
+            ret_code = 1
+    if ret_code == 0:
+      with open(dep_filename, 'w') as dep_file:
+        lines = [interval_set.formatted() + '\n'
+               for interval_set in interval_sets]
+        dep_file.write(''.join(sorted(lines)))
+    sys.exit(ret_code)
+
+
 proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                         cwd=sysroot)
 exit_code = proc.wait()
